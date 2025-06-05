@@ -8,8 +8,7 @@ import { GoDot } from "react-icons/go";
 import { LiaFileInvoiceSolid } from "react-icons/lia";
 import { AiOutlineFileText } from "react-icons/ai";
 import { MdKeyboardArrowRight } from "react-icons/md";
-import logo_gold from "../assets/logos/logo-gold.png"; 
-
+import logo_gold from "../assets/logos/logo-gold.png";
 
 const navItems = [
   {
@@ -27,7 +26,9 @@ const navItems = [
     ],
   },
   {
-    icon: <LiaFileInvoiceSolid className="text-2xl text-gray-600 dark:text-gray-400" />,
+    icon: (
+      <LiaFileInvoiceSolid className="text-2xl text-gray-600 dark:text-gray-400" />
+    ),
     label: "Proforma Invoices",
     children: [
       { label: "Create Proforma Invoice", link: "/create-proforma" },
@@ -35,7 +36,9 @@ const navItems = [
     ],
   },
   {
-    icon: <AiOutlineFileText className="text-2xl text-gray-600 dark:text-gray-400" />,
+    icon: (
+      <AiOutlineFileText className="text-2xl text-gray-600 dark:text-gray-400" />
+    ),
     label: "Invoices",
     children: [
       { label: "Create Invoice", link: "/create-invoice" },
@@ -44,7 +47,9 @@ const navItems = [
     ],
   },
   {
-    icon: <HiOutlineArchiveBox className="text-2xl text-gray-600 dark:text-gray-400" />,
+    icon: (
+      <HiOutlineArchiveBox className="text-2xl text-gray-600 dark:text-gray-400" />
+    ),
     label: "Products",
     children: [
       { label: "Add Products", link: "/add-product" },
@@ -52,7 +57,9 @@ const navItems = [
     ],
   },
   {
-    icon: <LuUsersRound className="text-2xl text-gray-600 dark:text-gray-400" />,
+    icon: (
+      <LuUsersRound className="text-2xl text-gray-600 dark:text-gray-400" />
+    ),
     label: "System Users",
     children: [
       { label: "Add Users", link: "/add-user" },
@@ -61,7 +68,11 @@ const navItems = [
   },
 ];
 
-const Sidebar = ({ sidebarExpanded, hoveringSidebar, setHoveringSidebar, className }) => {
+const Sidebar = ({
+  sidebarExpanded,
+  hoveringSidebar,
+  setHoveringSidebar,
+}) => {
   const [openDropdown, setOpenDropdown] = useState(null);
   const [mobileSiderBar, setMobileSidebar] = useState(false);
 
@@ -75,15 +86,15 @@ const Sidebar = ({ sidebarExpanded, hoveringSidebar, setHoveringSidebar, classNa
     if (window.innerWidth <= 580) {
       setMobileSidebar(true);
     } else {
-      setMobileSidebar(false); 
+      setMobileSidebar(false);
     }
   };
 
   useEffect(() => {
     setSidebarClose();
-    window.addEventListener('resize', setSidebarClose);
+    window.addEventListener("resize", setSidebarClose);
     return () => {
-      window.removeEventListener('resize', setSidebarClose);
+      window.removeEventListener("resize", setSidebarClose);
     };
   }, []);
 
@@ -97,13 +108,24 @@ const Sidebar = ({ sidebarExpanded, hoveringSidebar, setHoveringSidebar, classNa
         onMouseEnter={() => !sidebarExpanded && setHoveringSidebar(true)}
         onMouseLeave={() => setHoveringSidebar(false)}
       >
-        <div className="p-4 flex justify-between items-center">
-          <div className="flex items-center gap-2">
+        <div className="flex justify-between items-center">
+          <div className="flex justify-center items-center gap-2 w-full">
+            <img
+              src={logo_gold}
+              alt="Logo-Gold"
+              className={`transition-all duration-300 ${
+                !sidebarExpanded && !hoveringSidebar
+                  ? "w-full px-1 pt-2 object-cover"
+                  : "w-[55%] p-3"
+              }`}
+            />
+          </div>
+          {/* <div className="flex items-center gap-2">
             <img src={logo_gold} alt="Logo-Gold" className="h-6" />
             {(sidebarExpanded || hoveringSidebar) && (
               <span className="ml-2 text-lg font-semibold text-gray-900 dark:text-white">Invoice System</span>
             )}
-          </div>
+          </div> */}
         </div>
         <nav className="mt-5 px-2 text-[14px]">
           <ul className="flex flex-col gap-2 max-w-[280px] mx-auto">
@@ -132,8 +154,9 @@ const Sidebar = ({ sidebarExpanded, hoveringSidebar, setHoveringSidebar, classNa
                 <ul
                   className={`flex flex-col pl-6 pr-2 my-1 overflow-hidden transition-all duration-300 ease-in-out
                     ${
-                      openDropdown === item.label && (sidebarExpanded || hoveringSidebar)
-                        ? "max-h-screen opacity-100" 
+                      openDropdown === item.label &&
+                      (sidebarExpanded || hoveringSidebar)
+                        ? "max-h-screen opacity-100"
                         : "max-h-0 opacity-0"
                     }`}
                 >
@@ -143,7 +166,10 @@ const Sidebar = ({ sidebarExpanded, hoveringSidebar, setHoveringSidebar, classNa
                       className="flex font-semibold items-center p-2 gap-2 rounded transition-all duration-300 hover:bg-amber-100 dark:hover:bg-amber-700 text-gray-700 dark:text-gray-200"
                     >
                       <GoDot className="text-sm text-gray-500 dark:text-gray-400" />
-                      <Link to={child.link} className="whitespace-nowrap w-full">
+                      <Link
+                        to={child.link}
+                        className="whitespace-nowrap w-full"
+                      >
                         {child.label}
                       </Link>
                     </li>
@@ -159,12 +185,3 @@ const Sidebar = ({ sidebarExpanded, hoveringSidebar, setHoveringSidebar, classNa
 };
 
 export default Sidebar;
-
-
-
-
-
-
-
-
-

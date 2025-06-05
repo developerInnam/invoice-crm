@@ -60,8 +60,7 @@ const TextEditor = () => {
         [{ indent: "-1" }, { indent: "+1" }],
         ["clean"],
       ],
-      handlers: {
-      },
+      handlers: {},
     },
     history: {
       delay: 1000,
@@ -114,12 +113,21 @@ const TextEditor = () => {
       },
     ]);
   };
-
   const handleCloseContentBox = (idToClose) => {
-    setContentBoxes((prevBoxes) =>
-      prevBoxes.filter((box) => box.id !== idToClose)
-    );
+    setContentBoxes((prevBoxes) => {
+      if (prevBoxes.length === 1 && prevBoxes[0].id === idToClose) {
+        // console.log("Cannot close the last remaining content box.");
+        return prevBoxes;
+      }
+      return prevBoxes.filter((box) => box.id !== idToClose);
+    });
   };
+
+  // const handleCloseContentBox = (idToClose) => {
+  //   setContentBoxes((prevBoxes) =>
+  //     prevBoxes.filter((box) => box.id !== idToClose)
+  //   );
+  // };
 
   const handleQuillChange = (id, newValue) => {
     setContentBoxes((prevBoxes) =>
@@ -233,7 +241,8 @@ const TextEditor = () => {
                 className="text-white flex items-center gap-1 bg-blue-700 py-2 cursor-pointer hover:bg-blue-800 px-3 rounded"
                 onClick={handleAddContentBox}
               >
-                <MdAddCircleOutline className="text-2xl"/> <span className="font-semibold">Content Box</span>
+                <MdAddCircleOutline className="text-2xl" />{" "}
+                <span className="font-semibold">Content Box</span>
               </button>
               <div>
                 <button
@@ -261,7 +270,7 @@ const TextEditor = () => {
               theme="snow"
               value={box.value}
               onChange={(newValue) => handleQuillChange(box.id, newValue)}
-              modules={getModules(box.id)} // Pass modules for this specific Quill instance
+              modules={getModules(box.id)}
               formats={formats}
               className="border border-gray-300 rounded-md"
             />
@@ -270,14 +279,14 @@ const TextEditor = () => {
                 className="text-white flex gap-1 items-center font-semibold bg-blue-700 py-2 cursor-pointer hover:bg-blue-800 px-3 rounded"
                 onClick={() => setOpenPopup(true)}
               >
-                <MdAddCircleOutline className="text-2xl"/>
+                <MdAddCircleOutline className="text-2xl" />
                 <span>Select Product</span>
               </button>
               <button
                 className="text-white font-semibold flex gap-1 items-center bg-red-700 py-2 cursor-pointer hover:bg-red-800 px-3 rounded"
                 onClick={() => handleCloseContentBox(box.id)}
               >
-                <IoMdCloseCircleOutline className="text-2xl"/>
+                <IoMdCloseCircleOutline className="text-2xl" />
                 <span>Content Box</span>
               </button>
             </div>
@@ -505,7 +514,11 @@ const TextEditor = () => {
                 </button>
               </div>
               <div className="mx-5 mt-16">
-                <input type="text" placeholder="Enter a custom email to override the default invoice message." className="w-full py-2 px-2 rounded border-gray-300 border-2"/>
+                <input
+                  type="text"
+                  placeholder="Enter a custom email to override the default invoice message."
+                  className="w-full py-2 px-2 rounded border-gray-300 border-2"
+                />
               </div>
             </div>
           </div>

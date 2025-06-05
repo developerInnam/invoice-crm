@@ -18,9 +18,8 @@ const ManageCustomer = () => {
   const fetchCustomer = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}store_customers`);
-      setCustomers(res.data.data);
-      // console.log(res.data);
+      const res = await axios.get(`${API_BASE_URL}allcustomer`);
+      setCustomers(res.data);
     } catch (err) {
       console.error("Failed to fetch data:", err);
     } finally {
@@ -31,7 +30,7 @@ const ManageCustomer = () => {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this customer?")) {
       try {
-        await axios.delete(`${API_BASE_URL}store_customers/${id}`);
+        await axios.delete(`${API_BASE_URL}allcustomer/${id}`);
         setCustomers((prev) => prev.filter((c) => c.id !== id));
       } catch (err) {
         console.error("Failed to delete customer:", err);

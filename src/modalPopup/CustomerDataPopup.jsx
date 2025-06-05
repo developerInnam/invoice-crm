@@ -3,6 +3,7 @@ import axios from "axios";
 import { FaArrowUp, FaArrowDown } from "react-icons/fa";
 import { API_BASE_URL } from "../components/Api";
 import { IoSearchOutline } from "react-icons/io5";
+import Loader from "../components/Loader";
 
 const CustomerDataPopup = ({ openPopup, setOpenPopup }) => {
   const [customers, setCustomers] = useState([]);
@@ -16,9 +17,9 @@ const CustomerDataPopup = ({ openPopup, setOpenPopup }) => {
   const fetchCustomer = async () => {
     setLoading(true);
     try {
-      const res = await axios.get(`${API_BASE_URL}store_customers`);
-      setCustomers(res.data.data);
-      console.log(res.data);
+      const res = await axios.get(`${API_BASE_URL}allcustomer`);
+      setCustomers(res.data);
+      // console.log(res.data);
     } catch (err) {
       console.error("Failed to fetch data:", err);
     } finally {
@@ -137,7 +138,7 @@ const CustomerDataPopup = ({ openPopup, setOpenPopup }) => {
             <div className="overflow-hidden border rounded border-gray-300">
               {loading ? (
                 <div className="text-center p-4 text-gray-600">
-                  Loading customers...
+                <Loader />
                 </div>
               ) : (
                 <div className="relative">

@@ -5,9 +5,9 @@ const Loader = () => {
     <div
       aria-label="Loading..."
       role="status"
-      class="flex items-center justify-center space-x-2"
+      className="flex items-center justify-center space-x-2"
     >
-      <svg class="h-7 w-7 animate-spin stroke-gray-500" viewBox="0 0 256 256">
+      <svg className="h-7 w-7 animate-spin stroke-gray-500" viewBox="0 0 256 256">
         <line
           x1="128"
           y1="32"
@@ -81,7 +81,7 @@ const Loader = () => {
           strokeWidth="24"
         ></line>
       </svg>
-      <span class="font-medium text-gray-500">Loading...</span>
+      <span className="font-medium text-gray-500">Loading...</span>
     </div>
   );
 };

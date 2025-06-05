@@ -13,7 +13,7 @@ const MainContent = ({
 }) => {
   const navigate = useNavigate();
   const [toggleProfile, setToggleProfile] = useState(false);
-  const profileRef = useRef(null); // ref for the whole dropdown container
+  const profileRef = useRef(null); 
 
   useEffect(() => {
     const handleClickOutside = (event) => {
