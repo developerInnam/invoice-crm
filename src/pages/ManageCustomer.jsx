@@ -106,11 +106,11 @@ const ManageCustomer = () => {
         <input
           type="text"
           placeholder="Search customers..."
-          className="p-2 border border-gray-300 rounded w-full"
+          className="py-2 px-3 border border-gray-300 rounded w-full"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <IoSearchOutline className="absolute right-4 text-2xl top-3 cursor-pointer text-gray-500" />
+        <IoSearchOutline className="absolute right-4 text-2xl top-2 cursor-pointer text-gray-500" />
       </div>
       <div className="pb-4">
         <div className="min-w-full inline-block align-middle">
@@ -247,7 +247,7 @@ const ManageCustomer = () => {
                                   ></path>
                                 </svg>
                               </button>
-                              <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-black flex item-center">
+                              {/* <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-black flex item-center">
                                 <svg
                                   width="20"
                                   height="20"
@@ -263,7 +263,7 @@ const ManageCustomer = () => {
                                     strokeLinecap="round"
                                   ></path>
                                 </svg>
-                              </button>
+                              </button> */}
                             </td>
                           </tr>
                         ))

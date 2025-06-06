@@ -99,7 +99,7 @@ const ManageProducts = () => {
                         ></path>
                       </svg>
                     </button>
-                    <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-black flex item-center">
+                    {/* <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-black flex item-center">
                       <svg
                         width="20"
                         height="20"
@@ -115,13 +115,8 @@ const ManageProducts = () => {
                           strokeLinecap="round"
                         ></path>
                       </svg>
-                    </button>
+                    </button> */}
                   </td>
-                  {/* <td className="px-6 py-4">
-                    <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                      Checked In
-                    </span>
-                  </td> */}
                 </tr>
               </tbody>
             </table>

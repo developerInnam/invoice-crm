@@ -108,12 +108,12 @@ const AddUser = () => {
 
   return (
     <section className="flex-1 p-6">
-      <div className="pb-2 flex items-center justify-between border-b-2 mb-4 border-gray-300">
+      <div className="pb-2 flex items-center justify-between border-b-2 mb-4 border-gray-200">
         <PageTitle pageTitle={"Add User"} />
         <BreadCrumbs pageName={"user-list"} />
       </div>
-      <div className="bg-white border-2 border-gray-300 rounded shadow relative w-full">
-        <div className="flex p-5 items-start border-b-2 border-gray-300 justify-between">
+      <div className="bg-white border border-gray-200 rounded shadow relative w-full">
+        <div className="flex p-5 items-start border-b-2 border-gray-200 justify-between">
           <h3 className="text-xl font-semibold">User Information</h3>
         </div>
 
@@ -131,7 +131,7 @@ const AddUser = () => {
                   type="text"
                   name="name"
                   id="name"
-                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
+                  className="shadow-sm bg-gray-50 border border-gray-200 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
                   placeholder="Enter Name"
                   value={formData.name}
                   onChange={handleChange}
@@ -149,7 +149,7 @@ const AddUser = () => {
                   type="email"
                   name="email"
                   id="email"
-                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
+                  className="shadow-sm bg-gray-50 border border-gray-200 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
                   placeholder="Enter Email"
                   value={formData.email}
                   onChange={handleChange}
@@ -167,7 +167,7 @@ const AddUser = () => {
                   type="text"
                   name="phone"
                   id="phone"
-                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
+                  className="shadow-sm bg-gray-50 border border-gray-200 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
                   placeholder="Enter Phone Number"
                   value={formData.phone}
                   onChange={handleChange}
@@ -184,7 +184,7 @@ const AddUser = () => {
                 <select
                   name="userAccess"
                   id="userAccess"
-                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
+                  className="shadow-sm bg-gray-50 border border-gray-200 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
                   value={formData.userAccess}
                   onChange={handleChange}
                   required
@@ -211,7 +211,7 @@ const AddUser = () => {
                   type="password"
                   name="password"
                   id="password"
-                  className="shadow-sm bg-gray-50 border border-gray-300 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
+                  className="shadow-sm bg-gray-50 border border-gray-200 text-gray-900 sm:text-sm rounded focus:ring-cyan-600 focus:border-cyan-600 block w-full p-2.5"
                   placeholder="Enter Password"
                   value={formData.password}
                   onChange={handleChange}

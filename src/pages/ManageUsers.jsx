@@ -106,11 +106,11 @@ const ManageUsers = () => {
         <input
           type="text"
           placeholder="Search customers..."
-          className="p-2 border border-gray-300 rounded-md w-full"
+          className="py-2 px-3 border border-gray-300 rounded-md w-full"
           value={searchTerm}
           onChange={(e) => setSearchTerm(e.target.value)}
         />
-        <IoSearchOutline className="absolute right-4 text-2xl top-3 cursor-pointer text-gray-500" />
+        <IoSearchOutline className="absolute right-4 text-2xl top-2 cursor-pointer text-gray-500" />
       </div>
       <div className="pb-4">
         <div className="min-w-full inline-block align-middle">
@@ -119,7 +119,7 @@ const ManageUsers = () => {
               <div className="text-center p-4"><Loader /></div>
             ) : (
               <div className="relative">
-                <div className="overflow-y-auto max-h-[60vh]">
+                <div className="overflow-y-auto overflow-x-scroll max-h-[60vh]">
                   <table className="table-auto min-w-full rounded">
                     <thead className="sticky top-0 bg-gray-50 z-10">
                       <tr>
@@ -245,7 +245,7 @@ const ManageUsers = () => {
                                   ></path>
                                 </svg>
                               </button>
-                              <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-black flex item-center">
+                              {/* <button className="p-2 rounded-full bg-white group transition-all duration-500 hover:bg-black flex item-center">
                                 <svg
                                   width="20"
                                   height="20"
@@ -261,7 +261,7 @@ const ManageUsers = () => {
                                     strokeLinecap="round"
                                   ></path>
                                 </svg>
-                              </button>
+                              </button> */}
                             </td>
                           </tr>
                         ))

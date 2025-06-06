@@ -1,8 +1,9 @@
-/* Basic styles for Quill editor content (you might need more specific ones) */
 .ql-editor {
-  min-height: 200px;
+  min-height: 135px;
+  max-height: 135px;
+  overflow-y: auto;
   line-height: 1.5;
-  font-family: Arial, sans-serif; /* Default font */
+  font-family: Arial, sans-serif; 
 }
 
 /* Ensure images and tables within Quill editor are responsive */

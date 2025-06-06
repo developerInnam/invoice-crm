@@ -12,13 +12,13 @@ import logo_gold from "../assets/logos/logo-gold.png";
 
 const navItems = [
   {
-    icon: <IoIosLaptop className="text-2xl text-gray-600 dark:text-gray-400" />,
+    icon: <IoIosLaptop className="text-2xl text-gray-600" />,
     label: "Dashboard",
     children: [],
     link: "/dashboard",
   },
   {
-    icon: <FiUsers className="text-2xl text-gray-600 dark:text-gray-400" />,
+    icon: <FiUsers className="text-2xl text-gray-600" />,
     label: "Customers",
     children: [
       { label: "Add Customer", link: "/add-customer" },
@@ -27,7 +27,7 @@ const navItems = [
   },
   {
     icon: (
-      <LiaFileInvoiceSolid className="text-2xl text-gray-600 dark:text-gray-400" />
+      <LiaFileInvoiceSolid className="text-2xl text-gray-600" />
     ),
     label: "Proforma Invoices",
     children: [
@@ -37,7 +37,7 @@ const navItems = [
   },
   {
     icon: (
-      <AiOutlineFileText className="text-2xl text-gray-600 dark:text-gray-400" />
+      <AiOutlineFileText className="text-2xl text-gray-600" />
     ),
     label: "Invoices",
     children: [
@@ -48,7 +48,7 @@ const navItems = [
   },
   {
     icon: (
-      <HiOutlineArchiveBox className="text-2xl text-gray-600 dark:text-gray-400" />
+      <HiOutlineArchiveBox className="text-2xl text-gray-600" />
     ),
     label: "Products",
     children: [
@@ -58,7 +58,7 @@ const navItems = [
   },
   {
     icon: (
-      <LuUsersRound className="text-2xl text-gray-600 dark:text-gray-400" />
+      <LuUsersRound className="text-2xl text-gray-600" />
     ),
     label: "System Users",
     children: [
@@ -104,7 +104,7 @@ const Sidebar = ({
         id="sidebar"
         className={`${
           sidebarExpanded || hoveringSidebar ? "w-72" : "w-16"
-        } fixed top-0 left-0 h-screen z-40 transition-all duration-300 bg-white shadow border-r-2 border-[#F8F9FB] dark:bg-gray-800 dark:border-gray-700`}
+        } fixed top-0 left-0 h-screen z-40 transition-all duration-300 bg-white shadow border-r-2 border-[#F8F9FB]`}
         onMouseEnter={() => !sidebarExpanded && setHoveringSidebar(true)}
         onMouseLeave={() => setHoveringSidebar(false)}
       >
@@ -133,7 +133,7 @@ const Sidebar = ({
               <li key={item.label}>
                 <Link
                   to={item.link}
-                  className="flex items-center justify-between gap-2 rounded transition-all duration-300 hover:bg-amber-100 dark:hover:bg-amber-700 p-2 font-medium hover:cursor-pointer text-gray-700 dark:text-gray-200"
+                  className="flex items-center justify-between gap-2 rounded transition-all duration-300 hover:bg-amber-100 p-2 font-medium hover:cursor-pointer text-gray-700 dark:text-gray-200"
                   onClick={() => handleDropdownToggle(item.label)}
                 >
                   <span className="flex gap-3 items-center">
@@ -145,7 +145,7 @@ const Sidebar = ({
                   {item.children.length > 0 &&
                     (sidebarExpanded || hoveringSidebar) && (
                       <MdKeyboardArrowRight
-                        className={`w-5 h-5 text-gray-500 dark:text-gray-400 transition-transform duration-300 ${
+                        className={`w-5 h-5 text-gray-500 transition-transform duration-300 ${
                           openDropdown === item.label ? "rotate-90" : ""
                         }`}
                       />
@@ -163,9 +163,9 @@ const Sidebar = ({
                   {item.children.map((child) => (
                     <li
                       key={child.label}
-                      className="flex font-semibold items-center p-2 gap-2 rounded transition-all duration-300 hover:bg-amber-100 dark:hover:bg-amber-700 text-gray-700 dark:text-gray-200"
+                      className="flex font-semibold items-center p-2 gap-2 rounded transition-all duration-300 hover:bg-amber-100 text-gray-700 dark:text-gray-200"
                     >
-                      <GoDot className="text-sm text-gray-500 dark:text-gray-400" />
+                      <GoDot className="text-sm text-gray-500" />
                       <Link
                         to={child.link}
                         className="whitespace-nowrap w-full"

@@ -3,8 +3,8 @@ import { Link } from "react-router-dom";
 
 const BreadCrumbs = ({pageName}) => {
   return (
-    <nav className="flex" aria-label="Breadcrumb">
-      <ol className="inline-flex items-center space-x-1 md:space-x-2">
+    <nav className="md:flex hidden" aria-label="Breadcrumb">
+      <ol className="flex items-center space-x-1 md:space-x-2">
         <Link to={'/dashboard'}>
           <div className="flex items-center">
             {/* <span className="mx-2.5 text-gray-800 ">/</span> */}

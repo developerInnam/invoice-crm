@@ -3,13 +3,12 @@ import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { LiaRupeeSignSolid } from "react-icons/lia";
 import { AiOutlinePercentage } from "react-icons/ai";
-import { ImTable2 } from "react-icons/im";
 import { MdAddCircleOutline } from "react-icons/md";
 import { IoMdCloseCircleOutline } from "react-icons/io";
 import Quill from "quill";
 import ProductDataPopup from "../modalPopup/ProductDataPopup";
+import { Controller, useFieldArray, useFormContext } from "react-hook-form";
 
-// --- 1. Dynamic Font Sizes (5px to 40px) ---
 const MIN_FONT_SIZE = 18;
 const MAX_FONT_SIZE = 25;
 const FONT_SIZE_STEP = 1;
@@ -24,27 +23,44 @@ Size.whitelist = SIZES;
 Quill.register(Size, true);
 
 const TextEditor = () => {
+  // const { register, watch, setValue } = useFormContext();
+  const { control, register, setValue, getValues, watch } = useFormContext();
+
+  const { fields, append, remove } = useFieldArray({
+    control,
+    name: "contentBoxes",
+  });
+
+  const price = watch("price");
+  const discount = watch("discount");
+  const taxRate = 0.18;
+  const subTotal = price - discount;
+  const tax = subTotal * taxRate;
+  const total = subTotal + tax;
+
+  useEffect(() => {
+    setValue("subTotal", subTotal.toFixed(2));
+    setValue("tax", tax.toFixed(2));
+    setValue("total", total.toFixed(2));
+  }, [price, discount, setValue]);
+
   const [openPopup, setOpenPopup] = useState(false);
-  // State to manage multiple content boxes and their associated data
   const [contentBoxes, setContentBoxes] = useState([
     {
-      id: Date.now(), // Unique ID for each box
+      id: Date.now(),
       value: "",
-      showTableModal: false,
-      tableRows: 2,
-      tableCols: 2,
-      price: 0,
-      discount: 0,
-      subTotal: 0,
-      cgstSgst: 0,
-      total: 0,
-      removeGst: false,
-      showIgst: false,
+      // price: 0,
+      // discount: 0,
+      // subTotal: 0,
+      // cgstSgst: 0,
+      // total: 0,
+      // removeGst: false,
+      // showIgst: false,
     },
   ]);
+  // console.log(contentBoxes);
 
-  const quillRefs = useRef({}); // Use a ref to store references to multiple Quill instances
-
+  const quillRefs = useRef({});
   // Define modules with history for undo/redo
   const getModules = (boxId) => ({
     toolbar: {
@@ -100,34 +116,24 @@ const TextEditor = () => {
       {
         id: Date.now(),
         value: "",
-        showTableModal: false,
-        tableRows: 2,
-        tableCols: 2,
-        price: 0,
-        discount: 0,
-        subTotal: 0,
-        cgstSgst: 0,
-        total: 0,
-        removeGst: false,
-        showIgst: false,
+        // price: 0,
+        // discount: 0,
+        // subTotal: 0,
+        // cgstSgst: 0,
+        // total: 0,
+        // removeGst: false,
+        // showIgst: false,
       },
     ]);
   };
   const handleCloseContentBox = (idToClose) => {
     setContentBoxes((prevBoxes) => {
       if (prevBoxes.length === 1 && prevBoxes[0].id === idToClose) {
-        // console.log("Cannot close the last remaining content box.");
         return prevBoxes;
       }
       return prevBoxes.filter((box) => box.id !== idToClose);
     });
   };
-
-  // const handleCloseContentBox = (idToClose) => {
-  //   setContentBoxes((prevBoxes) =>
-  //     prevBoxes.filter((box) => box.id !== idToClose)
-  //   );
-  // };
 
   const handleQuillChange = (id, newValue) => {
     setContentBoxes((prevBoxes) =>
@@ -137,135 +143,56 @@ const TextEditor = () => {
     );
   };
 
-  const handleInsertTable = (id) => {
-    setContentBoxes((prevBoxes) =>
-      prevBoxes.map((box) =>
-        box.id === id ? { ...box, showTableModal: true } : box
-      )
-    );
-  };
-
-  const createTable = (id) => {
-    const editor = quillRefs.current[id]?.getEditor();
-    if (editor) {
-      const range = editor.getSelection();
-      if (range) {
-        const box = contentBoxes.find((b) => b.id === id);
-        let tableHtml = '<table class="w-full border border-gray-300 mb-4">';
-        tableHtml += "<tbody>";
-        for (let r = 0; r < box.tableRows; r++) {
-          tableHtml += "<tr>";
-          for (let c = 0; c < box.tableCols; c++) {
-            tableHtml += '<td class="p-2 border border-gray-300"></td>';
-          }
-          tableHtml += "</tr>";
-        }
-        tableHtml += "</tbody></table>";
-
-        editor.insertEmbed(range.index, "html", tableHtml);
-        editor.setSelection(range.index + 1);
-      }
-    }
-    setContentBoxes((prevBoxes) =>
-      prevBoxes.map((box) =>
-        box.id === id
-          ? { ...box, showTableModal: false, tableRows: 2, tableCols: 2 }
-          : box
-      )
-    );
-  };
-
-  const handleTableModalRowsChange = (id, value) => {
-    setContentBoxes((prevBoxes) =>
-      prevBoxes.map((box) =>
-        box.id === id ? { ...box, tableRows: parseInt(value) || 1 } : box
-      )
-    );
-  };
-
-  const handleTableModalColsChange = (id, value) => {
-    setContentBoxes((prevBoxes) =>
-      prevBoxes.map((box) =>
-        box.id === id ? { ...box, tableCols: parseInt(value) || 1 } : box
-      )
-    );
-  };
-
-  // --- Undo/Redo Functions (for a specific Quill instance) ---
-  const handleUndo = (id) => {
-    if (quillRefs.current[id]) {
-      quillRefs.current[id].getEditor().history.undo();
-    }
-  };
-
-  const handleRedo = (id) => {
-    if (quillRefs.current[id]) {
-      quillRefs.current[id].getEditor().history.redo();
-    }
-  };
-
-  // --- Calculation Table Handlers ---
-  const handleCalculationChange = (id, field, value) => {
-    setContentBoxes((prevBoxes) =>
-      prevBoxes.map((box) =>
-        box.id === id ? { ...box, [field]: parseFloat(value) || 0 } : box
-      )
-    );
-  };
-
-  const handleCheckboxChange = (id, field) => {
-    setContentBoxes((prevBoxes) =>
-      prevBoxes.map((box) =>
-        box.id === id ? { ...box, [field]: !box[field] } : box
-      )
-    );
-  };
-
   return (
     <div className="container mt-10">
       {openPopup && (
         <ProductDataPopup openPopup={openPopup} setOpenPopup={setOpenPopup} />
       )}
-
-      {contentBoxes.map((box, index) => (
+      <h1 className="text-2xl font-semibold text-gray-800">
+        Product Information
+      </h1>
+      {contentBoxes.map((box) => (
         <div
           key={box.id}
-          className="grid lg:grid-cols-2 grid-cols-1 gap-5 mb-10"
+          className="mb-4 flex lg:flex-row flex-col gap-5 w-full"
         >
-          <div>
-            <h1 className="text-2xl font-semibold mb-4 text-gray-800">
-              Create Your Invoice Content {index + 1}
-            </h1>
-            <div className="flex flex-wrap justify-between items-end gap-2 border-b border-gray-200 mb-4 pb-2">
+          <div className="w-full">
+            <div className="mt-4 flex justify-between mb-3">
               <button
-                className="text-white flex items-center gap-1 bg-blue-700 py-2 cursor-pointer hover:bg-blue-800 px-3 rounded"
-                onClick={handleAddContentBox}
+                className="text-white flex gap-1 items-center font-semibold bg-blue-700 py-2 cursor-pointer hover:bg-blue-800 px-3 rounded"
+                onClick={() => setOpenPopup(true)}
               >
-                <MdAddCircleOutline className="text-2xl" />{" "}
-                <span className="font-semibold">Content Box</span>
+                <MdAddCircleOutline className="text-2xl" />
+                <span className="md:block hidden">Select Product</span>
               </button>
-              <div>
+              <div className="flex items-center">
                 <button
-                  onClick={() => handleUndo(box.id)}
-                  className="px-3 py-1 cursor-pointer text-gray-700 font-semibold rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
+                  className="text-white font-semibold flex gap-1 items-center bg-red-700 py-2 cursor-pointer hover:bg-red-800 px-3 rounded"
+                  onClick={() => handleCloseContentBox(box.id)}
                 >
-                  <i className="fas fa-undo"></i> Go Back
+                  <IoMdCloseCircleOutline className="text-2xl" />
+                  {/* <span>Content Box</span> */}
                 </button>
-                <button
-                  onClick={() => handleRedo(box.id)}
-                  className="px-3 py-1 cursor-pointer text-gray-700 font-semibold rounded hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-300 focus:ring-opacity-50"
-                >
-                  <i className="fas fa-redo"></i> Go Front
-                </button>
-                {/* <button
-                  onClick={() => handleInsertTable(box.id)}
-                  className="px-2 py-2 text-gray-500 text-2xl cursor-pointer"
-                >
-                  <ImTable2 />
-                </button> */}
               </div>
             </div>
-            <ReactQuill
+            {fields.map((field, index) => (
+              <div key={field.id} className="mb-4">
+                <Controller
+                  control={control}
+                  name={`contentBoxes.${index}.value`}
+                  render={({ field: quillField }) => (
+                    <ReactQuill
+                      theme="snow"
+                      value={quillField.value}
+                      onChange={quillField.onChange}
+                      modules={getModules(box.id)}
+                      formats={formats}
+                      className="border border-gray-300 rounded-md"
+                    />
+                  )}
+                />
+
+                {/* <ReactQuill
               ref={(el) => (quillRefs.current[box.id] = el)}
               theme="snow"
               value={box.value}
@@ -273,92 +200,12 @@ const TextEditor = () => {
               modules={getModules(box.id)}
               formats={formats}
               className="border border-gray-300 rounded-md"
-            />
-            <div className="mt-4 flex justify-between p-4 bg-gray-100 rounded-md">
-              <button
-                className="text-white flex gap-1 items-center font-semibold bg-blue-700 py-2 cursor-pointer hover:bg-blue-800 px-3 rounded"
-                onClick={() => setOpenPopup(true)}
-              >
-                <MdAddCircleOutline className="text-2xl" />
-                <span>Select Product</span>
-              </button>
-              <button
-                className="text-white font-semibold flex gap-1 items-center bg-red-700 py-2 cursor-pointer hover:bg-red-800 px-3 rounded"
-                onClick={() => handleCloseContentBox(box.id)}
-              >
-                <IoMdCloseCircleOutline className="text-2xl" />
-                <span>Content Box</span>
-              </button>
-            </div>
-
-            {box.showTableModal && (
-              <div className="fixed inset-0 bg-gray-600 bg-opacity-50 flex items-center justify-center z-50">
-                <div className="bg-white p-6 rounded-lg shadow-xl w-96">
-                  <h3 className="text-lg font-bold mb-4">Insert Table</h3>
-                  <div className="mb-4">
-                    <label
-                      htmlFor={`rows-${box.id}`}
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Rows:
-                    </label>
-                    <input
-                      type="number"
-                      id={`rows-${box.id}`}
-                      min="1"
-                      value={box.tableRows}
-                      onChange={(e) =>
-                        handleTableModalRowsChange(box.id, e.target.value)
-                      }
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="mb-4">
-                    <label
-                      htmlFor={`cols-${box.id}`}
-                      className="block text-sm font-medium text-gray-700"
-                    >
-                      Columns:
-                    </label>
-                    <input
-                      type="number"
-                      id={`cols-${box.id}`}
-                      min="1"
-                      value={box.tableCols}
-                      onChange={(e) =>
-                        handleTableModalColsChange(box.id, e.target.value)
-                      }
-                      className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm p-2 focus:ring-blue-500 focus:border-blue-500"
-                    />
-                  </div>
-                  <div className="flex justify-end space-x-2">
-                    <button
-                      onClick={() =>
-                        setContentBoxes((prevBoxes) =>
-                          prevBoxes.map((b) =>
-                            b.id === box.id
-                              ? { ...b, showTableModal: false }
-                              : b
-                          )
-                        )
-                      }
-                      className="px-4 py-2 bg-gray-300 text-gray-800 rounded hover:bg-gray-400"
-                    >
-                      Cancel
-                    </button>
-                    <button
-                      onClick={() => createTable(box.id)}
-                      className="px-4 py-2 bg-green-500 text-white rounded hover:bg-green-600"
-                    >
-                      Insert
-                    </button>
-                  </div>
-                </div>
+            /> */}
               </div>
-            )}
+            ))}
           </div>
-          {/* Calculation Table */}
-          <div className="overflow-x-auto border border-gray-300 dark:border-gray-700 rounded">
+
+          <div className="overflow-x-auto border border-gray-300 dark:border-gray-700 rounded w-full">
             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
               <thead className="bg-gray-50 dark:bg-gray-700">
                 <tr>
@@ -368,6 +215,40 @@ const TextEditor = () => {
                   <th className="px-6 py-3 min-w-[160px] md:w-auto text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Discount
                   </th>
+                </tr>
+              </thead>
+              <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+                <tr>
+                  <td className="p-4">
+                    <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-white dark:bg-gray-700">
+                      <LiaRupeeSignSolid className="text-gray-600 dark:text-gray-400 mr-2" />
+                      <input
+                        type="number"
+                        className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
+                        placeholder="0.00"
+                        step="0.01"
+                        {...register("price")}
+                      />
+                    </div>
+                  </td>
+                  <td className="p-4">
+                    <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-white dark:bg-gray-700">
+                      <AiOutlinePercentage className="text-gray-600 dark:text-gray-400 mr-2" />
+                      <input
+                        type="number"
+                        className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
+                        placeholder="0"
+                        step="0.01"
+                        {...register("discount")}
+                      />
+                    </div>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+            <table className="min-w-full mt-6 divide-y divide-gray-200 dark:divide-gray-700">
+              <thead className="bg-gray-50 dark:bg-gray-700">
+                <tr>
                   <th className="px-6 py-3 min-w-[160px] md:w-auto text-left text-xs whitespace-nowrap font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
                     Sub Total
                   </th>
@@ -382,148 +263,89 @@ const TextEditor = () => {
                         type="number"
                         className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
                         placeholder="0.00"
-                        value={box.price}
-                        onChange={(e) =>
-                          handleCalculationChange(
-                            box.id,
-                            "price",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-white dark:bg-gray-700">
-                      <AiOutlinePercentage className="text-gray-600 dark:text-gray-400 mr-2" />
-                      <input
-                        type="number"
-                        className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
-                        placeholder="0"
-                        value={box.discount}
-                        onChange={(e) =>
-                          handleCalculationChange(
-                            box.id,
-                            "discount",
-                            e.target.value
-                          )
-                        }
-                      />
-                    </div>
-                  </td>
-                  <td className="p-4">
-                    <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-white dark:bg-gray-700">
-                      <LiaRupeeSignSolid className="text-gray-600 dark:text-gray-400 mr-2" />
-                      <input
-                        type="number"
-                        className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
-                        placeholder="0.00"
-                        value={box.subTotal}
-                        onChange={(e) =>
-                          handleCalculationChange(
-                            box.id,
-                            "subTotal",
-                            e.target.value
-                          )
-                        }
+                        {...register("subTotal")}
+                        readOnly
                       />
                     </div>
                   </td>
                 </tr>
               </tbody>
             </table>
-            <div className="mt-6">
-              <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
-                <thead className="bg-gray-50 dark:bg-gray-700">
-                  <tr>
-                    <th className="px-6 py-3 min-w-[160px] md:w-auto text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      CGST & SGST:
-                    </th>
-                    <th className="px-6 py-3 min-w-[160px] md:w-auto text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
-                      Total:
-                    </th>
-                  </tr>
-                </thead>
-                <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
-                  <tr>
-                    <td className="p-4">
-                      <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-white dark:bg-gray-700">
-                        <LiaRupeeSignSolid className="text-gray-600 dark:text-gray-400 mr-2" />
-                        <input
-                          type="number"
-                          className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
-                          placeholder="0.00"
-                          value={box.cgstSgst}
-                          onChange={(e) =>
-                            handleCalculationChange(
-                              box.id,
-                              "cgstSgst",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    </td>
-                    <td className="p-4">
-                      <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-white dark:bg-gray-700">
-                        <LiaRupeeSignSolid className="text-gray-600 dark:text-gray-400 mr-2" />
-                        <input
-                          type="number"
-                          className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
-                          placeholder="0"
-                          value={box.total}
-                          onChange={(e) =>
-                            handleCalculationChange(
-                              box.id,
-                              "total",
-                              e.target.value
-                            )
-                          }
-                        />
-                      </div>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-              <div className="mt-5 flex items-center justify-between mx-4 rounded">
-                <div className="flex gap-5">
-                  <div className="flex items-center justify-between font-semibold text-gray-800 gap-3">
-                    <span>Remove GST</span>
-                    <input
-                      type="checkbox"
-                      className="scale-125"
-                      checked={box.removeGst}
-                      onChange={() => handleCheckboxChange(box.id, "removeGst")}
-                    />
-                  </div>
-                  <div className="flex items-center justify-between font-semibold text-gray-800 gap-3">
-                    <span>Show IGST</span>
-                    <input
-                      type="checkbox"
-                      className="scale-125"
-                      checked={box.showIgst}
-                      onChange={() => handleCheckboxChange(box.id, "showIgst")}
-                    />
-                  </div>
-                </div>
-                <button
-                  className="text-white bg-blue-700 hover:bg-blue-900 cursor-pointer font-medium rounded text-sm px-5 py-2.5 text-center"
-                  type="submit"
-                >
-                  Create Invoice
-                </button>
-              </div>
-              <div className="mx-5 mt-16">
-                <input
-                  type="text"
-                  placeholder="Enter a custom email to override the default invoice message."
-                  className="w-full py-2 px-2 rounded border-gray-300 border-2"
-                />
-              </div>
-            </div>
           </div>
         </div>
       ))}
+      <div className="grid md:grid-cols-2 grid-cols-1">
+        <div className="flex flex-wrap justify-between gap-2">
+          <button
+            className="text-white flex items-center gap-1 bg-blue-700 py-2 cursor-pointer hover:bg-blue-800 px-3 rounded"
+            onClick={handleAddContentBox}
+          >
+            <MdAddCircleOutline className="text-2xl" />
+            <span className="font-semibold">Content Box</span>
+          </button>
+        </div>
+      </div>
+      <div className="mb-2 lg:mt-0 mt-5 lg:max-w-[485px] w-full float-right border border-gray-200">
+        <div>
+          <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
+            <thead className="bg-gray-50 dark:bg-gray-700">
+              <tr>
+                <th className="px-6 py-3 min-w-[160px] md:w-auto text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  CGST & SGST:
+                </th>
+                <th className="px-6 py-3 min-w-[160px] md:w-auto text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">
+                  Total:
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200 dark:bg-gray-800 dark:divide-gray-700">
+              <tr>
+                <td className="p-4">
+                  <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-white dark:bg-gray-700">
+                    <LiaRupeeSignSolid className="text-gray-600 dark:text-gray-400 mr-2" />
+                    <input
+                      type="number"
+                      className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
+                      placeholder="0.00"
+                      {...register("tax")}
+                    />
+                  </div>
+                </td>
+                <td className="p-4">
+                  <div className="flex items-center border border-gray-300 dark:border-gray-600 rounded px-2 py-1.5 bg-white dark:bg-gray-700">
+                    <LiaRupeeSignSolid className="text-gray-600 dark:text-gray-400 mr-2" />
+                    <input
+                      type="number"
+                      className="w-full bg-transparent text-gray-900 dark:text-white focus:outline-none focus:ring-0 border-none p-0"
+                      placeholder="0"
+                      {...register("total")}
+                      readOnly
+                    />
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+          <div className="mt-5 flex items-center justify-between mx-4 rounded">
+            <div className="flex md:flex-row flex-col md:gap-5 gap-2">
+              <div className="flex items-center justify-between font-semibold text-gray-800 gap-3">
+                <span className="md:text-[15px] text-[14px]">Remove GST</span>
+                <input type="checkbox" className="scale-125" />
+              </div>
+              <div className="flex items-center justify-between font-semibold text-gray-800 gap-3">
+                <span className="md:text-[15px] text-[14px]">Show IGST</span>
+                <input type="checkbox" className="scale-125" />
+              </div>
+            </div>
+            <button
+              className="text-white bg-blue-700 hover:bg-blue-900 cursor-pointer font-medium rounded text-sm px-5 py-2.5 text-center"
+              type="submit"
+            >
+              Create Invoice
+            </button>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };
